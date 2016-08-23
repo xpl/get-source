@@ -27,7 +27,7 @@ getSource = require ('get-source')
 file = getSource ('./scripts/index.min.js')
 ```
 
-Will read the file synchronously (either via XHR, or by filesystem API, depending on the environment). Result will contain the following fields:
+Will read the file synchronously (either via XHR or by filesystem API, depending on the environment). Result will contain the following fields:
 
 ```javascript
 file.path  // normalized file path
