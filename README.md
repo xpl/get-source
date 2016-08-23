@@ -27,7 +27,7 @@ getSource = require ('get-source')
 file = getSource ('./scripts/index.min.js')
 ```
 
-Will read `./scripts/index.min.js` synchronously (either via XHR, or by filesystem API, depending on the environment). Result will contain the following fields:
+Will read the file synchronously (either via XHR, or by filesystem API, depending on the environment). Result will contain the following fields:
 
 ```javascript
 file.path  // normalized file path
@@ -55,8 +55,6 @@ It will look through the sourcemap chain, returning following:
 In that returned object, `sourceFile` is the same kind of object that `getSource` returns. So you can access its `text`, `lines` and `path` fields to obtain the full information. And the `sourceLine` is returned just for the convenience, as a shortcut.
 
 ## Error handling
-
-In case of a nonexistent file:
 
 ```javascript
 nonsense = getSource ('/some/nonexistent/file')
