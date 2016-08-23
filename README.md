@@ -47,7 +47,7 @@ It will look through the sourcemap chain, returning following:
 {
    line:       <original line number>,
    column:     <original column number>,
-   sourceFile: <original source file object>
+   sourceFile: <original source file object>,
    sourceLine: <original source line text>
 }
 ```
