@@ -1,0 +1,43 @@
+<html>
+	<head>
+		<title>get-source test page</title>
+		<script src="/test_files/get-source.webpack.compiled.js"></script>
+	</head>
+	<body>
+		<script type="text/javascript">
+
+		try {
+
+			if (window.location.href !== 'http://localhost:8000/test.html') {
+				alert ('This test should be runned with "npm start", it won\'t work from local file!') }
+
+			if (typeof getSource !== 'function') {
+				alert ('something is wrong with get-source.webpack.compiled.js — not seeing getSource function')
+			}
+
+			document.body.innerText = getSource ('http://localhost:8000/./test_files/../test.js').text
+
+			const assert = function (a, b) {
+				if (a !== b) {
+					throw new Error ('assertion failed: ' + a + ' !== ' + b)
+				}
+			}
+
+	        const src = getSource ('./test_files/original.uglified.beautified.js')
+
+	        assert (src.path, 'test_files/original.uglified.beautified.js')
+	        assert (src.sourceMap !== undefined, true)
+
+	        const location = src.resolve ({ line: 2, column: 4 })
+
+	        assert (location.line, 4)
+	        assert (location.column, 1)
+	        assert (location.sourceFile.path, 'test_files/original.js')
+	        assert (location.sourceLine, '\treturn \'hello world\' }')
+
+        } catch (e) {
+        	alert (e)
+        }
+		</script>
+	</body>
+</html>

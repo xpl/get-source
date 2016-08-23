@@ -4,7 +4,8 @@
   "description": "Platform-agnostic source code inspection, with sourcemaps support",
   "main": "get-source",
   "scripts": {
-    "test": "./node_modules/.bin/mocha --reporter spec --watch"
+    "test": "./node_modules/.bin/mocha --reporter spec --watch",
+    "start": "webpack --entry ./test_files/get-source.webpack.entry ./test_files/get-source.webpack.compiled.js && (python -m SimpleHTTPServer 8000 & open http://localhost:8000/test.html)"
   },
   "repository": {
     "type": "git",

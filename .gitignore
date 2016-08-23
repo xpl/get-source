@@ -35,3 +35,7 @@ jspm_packages
 
 # Optional REPL history
 .node_repl_history
+
+# generated stuff
+test_files/get-source.webpack.compiled.js
+test_files/get-source.webpack.entry.js
