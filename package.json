@@ -1,0 +1,33 @@
+{
+  "name": "get-source",
+  "version": "1.0.0",
+  "description": "Platform-agnostic source code inspection, with sourcemaps support",
+  "main": "get-source",
+  "scripts": {
+    "test": "./node_modules/.bin/mocha --reporter spec --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xpl/get-source.git"
+  },
+  "keywords": [
+    "sources",
+    "sourcemap",
+    "read source",
+    "cached sources"
+  ],
+  "author": "Vitaly Gordon <rocket.mind@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/xpl/get-source/issues"
+  },
+  "homepage": "https://github.com/xpl/get-source",
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^2.4.5"
+  },
+  "dependencies": {
+    "lodash.memoize": "^4.1.2",
+    "source-map": "^0.5.6"
+  }
+}
