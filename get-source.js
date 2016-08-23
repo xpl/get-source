@@ -82,9 +82,11 @@ class SourceFile {
 
         try {
             if (this.sourceMap_ === undefined) {
-                let url = this.text.match (/\# sourceMappingURL=(.+\.map)/)
+                let url = this.text.match (/\u0023 sourceMappingURL=(.+\.map)/) // escape #, otherwise it will match this exact line.. %)
                 if (url = (url && url[1])) {
-                    this.sourceMap_ = new SourceMap (this.path, url) } } }
+                    this.sourceMap_ = new SourceMap (this.path, url) }
+                else {
+                    this.sourceMap_ = null } } }
 
         catch (e) {
             this.sourceMapError = e
