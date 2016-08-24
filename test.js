@@ -22,6 +22,12 @@ describe ('path', () => {
 
         path.relativeToFile ('/foo/bar/baz.js', './../.././qux.map')
               .should.equal ('/qux.map')
+
+        path.relativeToFile ('/foo/bar', 'webpack:something')
+              .should.equal ('webpack:something')
+
+        path.relativeToFile ('/foo/bar', 'web/pack:something')
+              .should.equal ('/foo/web/pack:something')
     })
 })
 

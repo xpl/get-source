@@ -4,7 +4,7 @@
 
 const path = module.exports = {
 
-    concat: (a, b) => {
+    concat (a, b) {
 
                 const a_endsWithSlash = (a[a.length - 1] === '/'),
                 	  b_startsWithSlash = (b[0] === '/')
@@ -12,7 +12,7 @@ const path = module.exports = {
                 return a + ((a_endsWithSlash || b_startsWithSlash) ? '' : '/') +
                            ((a_endsWithSlash && b_startsWithSlash) ? b.substring (1) : b) },
 
-	normalize: path => {
+	normalize (path) {
 
 		let output = [],
 		    skip = 0
@@ -27,8 +27,13 @@ const path = module.exports = {
 		return output.reverse ().join ('/')
 	},
 
-	relativeToFile: (a, b) => {
-	    return path.normalize (path.concat (a.split ('/').slice (0, -1).join ('/'), b))
+	isAbsolute: x => /^[^\/]*:/.test (x),
+
+	relativeToFile (a, b) {
+		
+	    return path.isAbsolute (b) ?
+	    			path.normalize (b) :
+	    			path.normalize (path.concat (a.split ('/').slice (0, -1).join ('/'), b))
 	}
 }
 

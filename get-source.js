@@ -35,12 +35,11 @@ class SourceMap {
     resolve (loc) {
 
         const originalLoc = this.parsed.originalPositionFor (loc)
-        
-        return this.sourceFor (originalLoc.source)
-                   .resolve (O.assign ({}, loc, {
-                        line: originalLoc.line,
-                        column: originalLoc.column,
-                        name: originalLoc.name }))
+        return originalLoc.source ? this.sourceFor (originalLoc.source)
+                                        .resolve (O.assign ({}, loc, {
+                                            line: originalLoc.line,
+                                            column: originalLoc.column,
+                                            name: originalLoc.name })) : loc
     }
 }
 
