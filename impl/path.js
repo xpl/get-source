@@ -2,6 +2,10 @@
 
 /*  ------------------------------------------------------------------------ */
 
+const isBrowser = (typeof window !== 'undefined') && (window.window === window) && window.navigator
+
+/*  ------------------------------------------------------------------------ */
+
 const path = module.exports = {
 
     concat (a, b) {
@@ -12,22 +16,36 @@ const path = module.exports = {
                 return a + ((a_endsWithSlash || b_startsWithSlash) ? '' : '/') +
                            ((a_endsWithSlash && b_startsWithSlash) ? b.substring (1) : b) },
 
-	normalize (path) {
+    resolve (x) {
+
+    	if (path.isAbsolute (x)) {
+    		return path.normalize (x) }
+
+    	if (isBrowser) {
+    		return path.normalize (path.concat (window.location.href, x)) }
+
+    	else {
+    		return path.normalize (path.concat (process.cwd (), x)) }
+    },
+
+	normalize (x) {
 
 		let output = [],
 		    skip = 0
 
-		path.split ('/').reverse ().filter (x => x !== '.').forEach (x => {
+		x.split ('/').reverse ().filter (x => x !== '.').forEach (x => {
 
 			     if (x === '..') { skip++ }
 			else if (skip === 0) { output.push (x) }
 			else                 { skip-- }
 		})
 
-		return output.reverse ().join ('/')
+		const result = output.reverse ().join ('/')
+
+		return ((isBrowser && (result[0] === '/')) ? window.location.origin : '') + result
 	},
 
-	isAbsolute: x => /^[^\/]*:/.test (x),
+	isAbsolute: x => (x[0] === '/') || /^[^\/]*:/.test (x),
 
 	relativeToFile (a, b) {
 		

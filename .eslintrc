@@ -2,5 +2,9 @@
   "parserOptions": {
     "ecmaVersion": 6,
     "sourceType": "script"
+  },
+  "parser": "babel-eslint",
+  "rules": {
+    "strict": 0
   }
 }

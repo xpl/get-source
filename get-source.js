@@ -13,7 +13,7 @@ const O                 = Object,
 
 const newSourceFileMemoized = memoize (file => new SourceFile (file))
 
-const getSource = module.exports = file => newSourceFileMemoized (path.normalize (file))
+const getSource = module.exports = file => { return newSourceFileMemoized (path.resolve (file)) }
 
 /*  ------------------------------------------------------------------------ */
 
@@ -94,7 +94,7 @@ class SourceFile {
         return this.sourceMap_
     }
 
-    resolve (loc /* { line, column } */) /* → { line, column, sourceFile, sourceLine } */ {
+    resolve (loc /* { line[, column] } */) /* → { line, column, sourceFile, sourceLine } */ {
 
         return this.sourceMap ? this.sourceMap.resolve (loc) : O.assign ({}, loc, {
 

@@ -1,6 +1,8 @@
 "use strict";
 
-/*  ------------------------------------------------------------------------ */
+/*  NOTE: I've used supervisor to auto-restart mocha, because mocha --watch
+          didn't work for selenium tests (not reloading them)...
+          ------------------------------------------------------------------ */
                     
 require ('chai').should ()
 
@@ -10,9 +12,17 @@ describe ('path', () => {
 
     const path = require ('./impl/path')
 
+    it ('resolves', () => {
+
+        path.resolve ('./foo/bar/../qux').should.equal (process.cwd () + '/foo/qux')
+    })
+
     it ('normalizes', () => {
 
         path.normalize ('./foo/./bar/.././.././qux.map./').should.equal ('qux.map./')
+
+        path.normalize ('/a/b').should.equal ('/a/b')
+        path.normalize ('http://foo/bar').should.equal ('http://foo/bar')
     })
 
     it ('computes relative location', () => {
@@ -48,7 +58,7 @@ describe ('get-source', () => {
 
         const original = getSource ('./test_files/original.js')
 
-        original.path.should.equal ('test_files/original.js') // normalizes input paths
+        original.path.should.equal ('/Users/mac/get-source/test_files/original.js') // resolves input paths
         original.text.should.equal (fs.readFileSync ('./test_files/original.js', { encoding: 'utf-8' }))
         original.lines.should.deep.equal ([
             '/*\tDummy javascript file\t*/',
@@ -69,7 +79,7 @@ describe ('get-source', () => {
 
         const uglified = getSource ('./test_files/original.uglified.js')
 
-        uglified.path.should.equal ('test_files/original.uglified.js')
+        uglified.path.should.equal ('/Users/mac/get-source/test_files/original.uglified.js')
         uglified.lines.should.deep.equal ([
             'function hello(){return"hello world"}',
             '//# sourceMappingURL=original.uglified.js.map',
@@ -79,7 +89,7 @@ describe ('get-source', () => {
         uglified.sourceMap.should.not.equal (undefined)
         uglified.sourceMap.should.equal (uglified.sourceMap) // memoization should work
 
-        const resolved = uglified.resolve ({ line: 1, column: 18 })
+        const resolved = uglified.resolve ({ line: 1, column: 18 }) // should be tolerant to column omission
 
         resolved.line.should.equal (4)
         resolved.column.should.equal (1)
@@ -91,7 +101,7 @@ describe ('get-source', () => {
 
         const uglified = getSource ('./test_files/original.uglified.with.sources.js')
 
-        uglified.path.should.equal ('test_files/original.uglified.with.sources.js')
+        uglified.path.should.equal ('/Users/mac/get-source/test_files/original.uglified.with.sources.js')
         uglified.lines.should.deep.equal ([
             'function hello(){return"hello world"}',
             '//# sourceMappingURL=original.uglified.with.sources.js.map',
@@ -104,7 +114,7 @@ describe ('get-source', () => {
 
         resolved.line.should.equal (4)
         resolved.column.should.equal (1)
-        resolved.sourceFile.path.should.equal ('test_files/## embedded ##') // I've changed the filename manually, by editing .map file
+        resolved.sourceFile.path.should.equal ('/Users/mac/get-source/test_files/## embedded ##') // I've changed the filename manually, by editing .map file
         resolved.sourceLine.should.equal ('\treturn \'hello world\' }')
     })
 
@@ -115,7 +125,7 @@ describe ('get-source', () => {
 
         const beautified = getSource ('./test_files/original.uglified.beautified.js')
 
-        beautified.path.should.equal ('test_files/original.uglified.beautified.js')
+        beautified.path.should.equal ('/Users/mac/get-source/test_files/original.uglified.beautified.js')
         beautified.text.should.equal (fs.readFileSync ('./test_files/original.uglified.beautified.js', { encoding: 'utf-8' }))
 
         beautified.sourceMap.should.not.equal (undefined)
@@ -124,7 +134,7 @@ describe ('get-source', () => {
 
         resolved.line.should.equal (4)
         resolved.column.should.equal (1)
-        resolved.sourceFile.path.should.equal ('test_files/original.js')
+        resolved.sourceFile.path.should.equal ('/Users/mac/get-source/test_files/original.js')
         resolved.sourceLine.should.equal ('\treturn \'hello world\' }')
     })
 
@@ -140,7 +150,107 @@ describe ('get-source', () => {
         resolved.error.should.equal (nonsense.error)
         resolved.sourceLine.should.equal ('')
     })
+
+    it ('allows absolute paths', () => {
+
+        getSource (require ('path').resolve ('./test.js')).should.equal (getSource ('./test.js'))
+    })
 })
 
+/*  TODO: should find a way to run all tests within both Node and
+          ChromeDriver automatically...
+          ------------------------------------------------------------------ */
 
+const selenium = require ('selenium-webdriver/testing')
 
+/*  ------------------------------------------------------------------------ */
+
+selenium.describe ('Chrome test', (done) => {
+
+    const webdriver = require ('selenium-webdriver'),
+          path      = require ('path'),
+          fs        = require ('fs'),
+          memFS     = new (require ('memory-fs')) (),
+          it        = selenium.it,
+          webpack   = require ('webpack'),
+          logging   = require ('selenium-webdriver/lib/logging')
+
+    let driver
+
+/*  Prepare ChromeDriver (with CORS disabled and log interception enabled)   */
+
+    selenium.before (() => driver =
+                            new webdriver
+                                    .Builder ()
+                                    .withCapabilities (
+                                        webdriver.Capabilities
+                                                 .chrome ()
+                                                 .setLoggingPrefs (new logging.Preferences ().setLevel (logging.Type.BROWSER, logging.Level.ALL))
+                                                 .set ('chromeOptions', {
+                                                          'args': ['--disable-web-security'] }))
+                                    .build ())
+
+    selenium.after  (() => driver.quit ())
+
+    it ('works', async () => {
+
+    /*  Compile get-source   */
+
+        const compiledScript = await (new Promise (resolve => { Object.assign (webpack ({ 
+
+                entry: './test_files/get-source.webpack.entry.js',
+                output: { path: '/', filename: 'get-source.webpack.compiled.js' },
+                plugins: [ new webpack.IgnorePlugin(/^fs$/) ]
+
+            }), { outputFileSystem: memFS }).run ((err, stats) => {
+
+                if (err) throw err
+
+                resolve (memFS.readFileSync ('/get-source.webpack.compiled.js').toString ('utf-8'))
+            })
+        }))
+
+    /*  Inject it into Chrome   */
+
+        driver.get ('file://' + path.resolve ('./test.html'))
+        driver.executeScript (compiledScript)
+
+    /*  Execute test    */
+
+        const exec = fn => driver.executeScript (`(${fn.toString ()})()`)
+
+        try {
+
+            await exec (function () {
+
+                path.relativeToFile ('http://foo.com/scripts/bar.js', '../bar.js.map')
+                      .should.equal ('http://foo.com/bar.js.map')
+
+                path.relativeToFile ('http://foo.com/scripts/bar.js', 'http://bar.js.map')
+                      .should.equal ('http://bar.js.map')
+
+                path.relativeToFile ('http://foo.com/scripts/bar.js', '/bar.js.map')
+                      .should.equal ('file:///bar.js.map')
+
+                var loc = getSource ('../test_files/original.uglified.beautified.js').resolve ({ line: 2, column: 4 })
+
+                loc.line.should.equal (4)
+                loc.column.should.equal (1)
+                loc.sourceFile.path.should.contain ('test_files/original.js')
+                loc.sourceLine.should.equal ('\treturn \'hello world\' }')
+            })
+
+        } catch (e) { throw e } finally {
+
+            driver.manage ().logs ().get (logging.Type.BROWSER).then (entries => {
+                entries.forEach (entry => {
+                    console.log('[BROWSER] [%s] %s', entry.level.name, entry.message);
+                })
+            })
+        }
+
+    })
+
+})
+
+// /*  ------------------------------------------------------------------------ */

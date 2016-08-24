@@ -4,8 +4,7 @@
   "description": "Platform-agnostic source code inspection, with sourcemaps support",
   "main": "get-source",
   "scripts": {
-    "test": "./node_modules/.bin/mocha --reporter spec --watch",
-    "start": "webpack --entry ./test_files/get-source.webpack.entry ./test_files/get-source.webpack.compiled.js && (python -m SimpleHTTPServer 8000 & open http://localhost:8000/test.html)"
+    "test": "./node_modules/.bin/supervisor -n exit -x ./node_modules/.bin/mocha -- --compilers js:babel-core/register --reporter spec"
   },
   "repository": {
     "type": "git",
@@ -24,8 +23,17 @@
   },
   "homepage": "https://github.com/xpl/get-source",
   "devDependencies": {
+    "babel-core": "^6.13.2",
+    "babel-eslint": "^6.1.2",
+    "babel-preset-es2017": "^1.6.1",
+    "babel-register": "^6.11.6",
     "chai": "^3.5.0",
-    "mocha": "^2.4.5"
+    "chromedriver": "^2.23.1",
+    "memory-fs": "^0.3.0",
+    "mocha": "^2.4.5",
+    "selenium-webdriver": "^2.53.3",
+    "supervisor": "^0.11.0",
+    "webpack": "^1.13.2"
   },
   "dependencies": {
     "lodash.memoize": "^4.1.2",
