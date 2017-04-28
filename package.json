@@ -1,6 +1,6 @@
 {
   "name": "get-source",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Platform-agnostic source code inspection, with sourcemaps support",
   "main": "get-source",
   "scripts": {
