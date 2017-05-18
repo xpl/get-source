@@ -15,8 +15,8 @@ npm install get-source
 
 ## What for
 
-- [x] Call stacks enhanced with source code information (see [StackTracey](https://github.com/xpl/stacktracey) library)
-- [x] Advanced logging / assertion printing
+- [x] Call stacks enhanced with source code information (see the [StackTracey](https://github.com/xpl/stacktracey) library)
+- [x] [Advanced logging](https://github.com/xpl/ololog) / assertion printing
 
 ## Usage
 
