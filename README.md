@@ -10,7 +10,7 @@ npm install get-source
 
 - [x] Allows to read source code files in Node and browsers
 - [x] Full sourcemap support (path resolving, external/embedded linking and long chains)
-- [x] **Synchronous** API — which is good when you implement a debugging tool (e.g. logging)
+- [x] **Synchronous** API — which is good when you implement a debugging tool (e.g. [logging](https://github.com/xpl/ololog))
 - [x] Built-in cache
 
 ## What for
