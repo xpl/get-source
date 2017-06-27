@@ -65,6 +65,6 @@ nonsense.error // should be an Error object, representing an actual error thrown
 ```javascript
 resolved = nonsense.resolve ({ line: 5, column: 0 })
 
-resolved.error      // should be an Error object, representing an actual error thrown during reading/parsing
 resolved.sourceLine // empty string (so it's safe to access without checking)
+resolved.error      // should be an Error object, representing an actual error thrown during reading/parsing
 ```
