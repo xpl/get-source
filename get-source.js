@@ -7,6 +7,7 @@ const O                 = Object,
       SourceMapConsumer = require ('source-map').SourceMapConsumer,
       path              = require ('./impl/path'),
       memoize           = require ('lodash.memoize'),
+      dataURIToBuffer   = require ('data-uri-to-buffer'),
       lastOf            = x => x[x.length - 1]
 
 /*  ------------------------------------------------------------------------ */
@@ -54,6 +55,9 @@ class SourceFile {
         if (text) {
             this.text = text }
 
+        else if (path.startsWith ('data:')) {
+            this.text = dataURIToBuffer (path).toString () }
+
         else {
             try {
                 if (isBrowser) {
@@ -80,23 +84,30 @@ class SourceFile {
     get sourceMap () {
 
         try {
+
             if (this.sourceMap_ === undefined) {
-                let url = this.text.match (/\u0023 sourceMappingURL=(.+\.map)/) // escape #, otherwise it will match this exact line.. %)
-                if (url = (url && url[1])) {
+
+                const [,url] = this.text.match (/\# sourceMappingURL=(.+)\n?/) || [undefined, undefined]
+
+                if (url) {
+
                     const sourceMap = new SourceMap (this.path, url)
+
                     if (sourceMap.parsed) {
                         this.sourceMap_ = sourceMap
                     }
-                }
-                else {
+
+                } else {
+
                     this.sourceMap_ = null
                 }
             }
         }
 
         catch (e) {
+            this.sourceMap_ = null
             this.sourceMapError = e
-            this.sourceMap_ = null }
+        }
 
         return this.sourceMap_
     }

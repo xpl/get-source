@@ -39,6 +39,13 @@ describe ('path', () => {
         path.relativeToFile ('/foo/bar', 'web/pack:something')
               .should.equal ('/foo/web/pack:something')
     })
+
+    it ('works with data URIs', () => {
+
+        path.relativeToFile ('/foo/bar.js', 'data:application/json;charset=utf-8;base64,eyJ2ZXJza==')
+              .should.equal (               'data:application/json;charset=utf-8;base64,eyJ2ZXJza==')
+
+    })
 })
 
 /*  ------------------------------------------------------------------------ */
@@ -118,6 +125,18 @@ describe ('get-source', () => {
         resolved.sourceLine.should.equal ('\treturn \'hello world\' }')
     })
 
+    it ('reads sources (sourcemapped, with inline base64 sourcemaps)', () => {
+
+        const babeled = getSource ('./test_files/original.babeled.with.inline.sourcemap.js')
+
+        babeled.sourceMap.should.not.equal (undefined)
+
+        const resolved = babeled.resolve ({ line: 6, column: 1 })
+
+        resolved.line.should.equal (4)
+        resolved.column.should.equal (1)
+        resolved.sourceLine.should.equal ('\treturn \'hello world\' }')
+    })
 
     it ('supports even CHAINED sourcemaps!', () => {
 
