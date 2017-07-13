@@ -45,6 +45,8 @@ describe ('path', () => {
         path.relativeToFile ('/foo/bar.js', 'data:application/json;charset=utf-8;base64,eyJ2ZXJza==')
               .should.equal (               'data:application/json;charset=utf-8;base64,eyJ2ZXJza==')
 
+        path.relativeToFile ('data:application/json;charset=utf-8;base64,eyJ2ZXJza==', 'foo.js')
+              .should.equal (                                                          'foo.js')
     })
 })
 

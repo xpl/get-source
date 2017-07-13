@@ -45,11 +45,13 @@ const path = module.exports = {
 		return ((isBrowser && (result[0] === '/')) ? window.location.origin : '') + result
 	},
 
+	isData: x => x.indexOf ('data:') === 0,
+
 	isAbsolute: x => (x[0] === '/') || /^[^\/]*:/.test (x),
 
 	relativeToFile (a, b) {
 		
-	    return path.isAbsolute (b) ?
+	    return (path.isData (a) || path.isAbsolute (b)) ?
 	    			path.normalize (b) :
 	    			path.normalize (path.concat (a.split ('/').slice (0, -1).join ('/'), b))
 	}
