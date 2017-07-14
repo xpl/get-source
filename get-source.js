@@ -22,7 +22,10 @@ class SourceMap {
 
     constructor (originalFilePath, sourceMapPath) {
 
-        this.file      = getSource (path.relativeToFile (originalFilePath, sourceMapPath))
+        this.file = sourceMapPath.startsWith ('data:')
+                        ? new SourceFile (originalFilePath, dataURIToBuffer (sourceMapPath).toString ())
+                        : getSource (path.relativeToFile (originalFilePath, sourceMapPath))
+
         this.parsed    = (this.file.text && SourceMapConsumer (JSON.parse (this.file.text))) || null
         this.sourceFor = memoize (this.sourceFor.bind (this))
     }
@@ -54,9 +57,6 @@ class SourceFile {
 
         if (text) {
             this.text = text }
-
-        else if (path.startsWith ('data:')) {
-            this.text = dataURIToBuffer (path).toString () }
 
         else {
             try {

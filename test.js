@@ -132,6 +132,7 @@ describe ('get-source', () => {
         const babeled = getSource ('./test_files/original.babeled.with.inline.sourcemap.js')
 
         babeled.sourceMap.should.not.equal (undefined)
+        babeled.sourceMap.file.path.should.equal (babeled.path)
 
         const resolved = babeled.resolve ({ line: 6, column: 1 })
 
