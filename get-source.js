@@ -87,7 +87,7 @@ class SourceFile {
 
             if (this.sourceMap_ === undefined) {
 
-                const [,url] = this.text.match (/\# sourceMappingURL=(.+)\n?/) || [undefined, undefined]
+                const [,url] = this.text.match (/\u0023 sourceMappingURL=(.+)\n?/) || [undefined, undefined] // escape #, otherwise it will match this exact line.. %)
 
                 if (url) {
 
