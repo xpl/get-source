@@ -28,7 +28,8 @@
     "chromedriver": "^2.23.1",
     "memory-fs": "^0.3.0",
     "mocha": "^2.4.5",
-    "selenium-webdriver": "^2.53.3"
+    "selenium-webdriver": "^2.53.3",
+    "webpack": "^3.2.0"
   },
   "dependencies": {
     "data-uri-to-buffer": "^1.0.0",
