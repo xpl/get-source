@@ -33,7 +33,6 @@
   },
   "dependencies": {
     "data-uri-to-buffer": "^1.0.0",
-    "lodash.memoize": "^4.1.2",
     "source-map": "^0.5.6"
   }
 }
