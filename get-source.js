@@ -6,15 +6,28 @@ const O                 = Object,
       isBrowser         = (typeof window !== 'undefined') && (window.window === window) && window.navigator,
       SourceMapConsumer = require ('source-map').SourceMapConsumer,
       path              = require ('./impl/path'),
-      memoize           = require ('lodash.memoize'),
       dataURIToBuffer   = require ('data-uri-to-buffer'),
       lastOf            = x => x[x.length - 1]
+
+/*  ------------------------------------------------------------------------ */
+
+const memoize = f => {
+    
+    const m = (x = '') => (x in m.cache) ? m.cache[x] : (m.cache[x] = f(x))
+    m.forgetEverything = () => { m.cache = Object.create (null) }
+    m.cache = Object.create (null)
+
+    return m
+}
 
 /*  ------------------------------------------------------------------------ */
 
 const newSourceFileMemoized = memoize (file => new SourceFile (file))
 
 const getSource = module.exports = file => { return newSourceFileMemoized (path.resolve (file)) }
+
+getSource.resetCache = () => newSourceFileMemoized.forgetEverything ()
+getSource.getCache = () => newSourceFileMemoized.cache
 
 /*  ------------------------------------------------------------------------ */
 

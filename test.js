@@ -55,7 +55,8 @@ describe ('path', () => {
 describe ('get-source', () => {
 
     const getSource = require ('./get-source'),
-          fs        = require ('fs')
+          fs        = require ('fs'),
+          path      = require ('path')
 
     it ('caches read files', () => {
 
@@ -67,7 +68,7 @@ describe ('get-source', () => {
 
         const original = getSource ('./test_files/original.js')
 
-        original.path.should.equal ('/Users/mac/get-source/test_files/original.js') // resolves input paths
+        original.path.should.equal (path.resolve ('./test_files/original.js')) // resolves input paths
         original.text.should.equal (fs.readFileSync ('./test_files/original.js', { encoding: 'utf-8' }))
         original.lines.should.deep.equal ([
             '/*\tDummy javascript file\t*/',
@@ -88,7 +89,7 @@ describe ('get-source', () => {
 
         const uglified = getSource ('./test_files/original.uglified.js')
 
-        uglified.path.should.equal ('/Users/mac/get-source/test_files/original.uglified.js')
+        uglified.path.should.equal (path.resolve ('./test_files/original.uglified.js'))
         uglified.lines.should.deep.equal ([
             'function hello(){return"hello world"}',
             '//# sourceMappingURL=original.uglified.js.map',
@@ -110,7 +111,7 @@ describe ('get-source', () => {
 
         const uglified = getSource ('./test_files/original.uglified.with.sources.js')
 
-        uglified.path.should.equal ('/Users/mac/get-source/test_files/original.uglified.with.sources.js')
+        uglified.path.should.equal (path.resolve ('./test_files/original.uglified.with.sources.js'))
         uglified.lines.should.deep.equal ([
             'function hello(){return"hello world"}',
             '//# sourceMappingURL=original.uglified.with.sources.js.map',
@@ -123,7 +124,7 @@ describe ('get-source', () => {
 
         resolved.line.should.equal (4)
         resolved.column.should.equal (1)
-        resolved.sourceFile.path.should.equal ('/Users/mac/get-source/test_files/## embedded ##') // I've changed the filename manually, by editing .map file
+        resolved.sourceFile.path.should.equal (path.resolve ('./test_files') + '/## embedded ##') // I've changed the filename manually, by editing .map file
         resolved.sourceLine.should.equal ('\treturn \'hello world\' }')
     })
 
@@ -147,7 +148,7 @@ describe ('get-source', () => {
 
         const beautified = getSource ('./test_files/original.uglified.beautified.js')
 
-        beautified.path.should.equal ('/Users/mac/get-source/test_files/original.uglified.beautified.js')
+        beautified.path.should.equal (path.resolve ('./test_files/original.uglified.beautified.js'))
         beautified.text.should.equal (fs.readFileSync ('./test_files/original.uglified.beautified.js', { encoding: 'utf-8' }))
 
         beautified.sourceMap.should.not.equal (undefined)
@@ -156,7 +157,7 @@ describe ('get-source', () => {
 
         resolved.line.should.equal (4)
         resolved.column.should.equal (1)
-        resolved.sourceFile.path.should.equal ('/Users/mac/get-source/test_files/original.js')
+        resolved.sourceFile.path.should.equal (path.resolve ('./test_files/original.js'))
         resolved.sourceLine.should.equal ('\treturn \'hello world\' }')
     })
 
@@ -176,6 +177,28 @@ describe ('get-source', () => {
     it ('allows absolute paths', () => {
 
         getSource (require ('path').resolve ('./test.js')).should.equal (getSource ('./test.js'))
+    })
+
+    it ('caching works', () => {
+        
+        const files =
+                [   './test.js',
+                    './package.json',
+                    './test_files/original.js',
+                    './test_files/original.uglified.js',
+                    './test_files/original.uglified.js.map',
+                    './test_files/original.uglified.with.sources.js',
+                    './test_files/original.uglified.with.sources.js.map',
+                    './test_files/original.babeled.with.inline.sourcemap.js',
+                    './test_files/original.uglified.beautified.js',
+                    './test_files/original.uglified.beautified.js.map',
+                    './abyrvalg' ]
+            
+        Object.keys (getSource.getCache ()).should.deep.equal (files.map (x => path.resolve (x)))
+
+        getSource.resetCache ()
+
+        Object.keys (getSource.getCache ()).length.should.equal (0)
     })
 })
 
