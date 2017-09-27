@@ -13,7 +13,7 @@ const O                 = Object,
 
 const memoize = f => {
     
-    const m = (x = '') => (x in m.cache) ? m.cache[x] : (m.cache[x] = f(x))
+    const m = x => (x in m.cache) ? m.cache[x] : (m.cache[x] = f(x))
     m.forgetEverything = () => { m.cache = Object.create (null) }
     m.cache = Object.create (null)
 
@@ -100,10 +100,14 @@ class SourceFile {
 
             if (this.sourceMap_ === undefined) {
 
-                const [,url] = this.text.match (/\u0023 sourceMappingURL=(.+)\n?/) || [undefined, undefined] // escape #, otherwise it will match this exact line.. %)
+                // Node v4 does not support destructuring...
+                // const [,url] = this.text.match (/\u0023 sourceMappingURL=(.+)\n?/) || [undefined, undefined] // escape #, otherwise it will match this exact line.. %)
+                
+                const match = this.text.match (/\u0023 sourceMappingURL=(.+)\n?/) || [undefined, undefined] // escape #, otherwise it will match this exact line.. %)
+                    , url = match[1]
 
                 if (url) {
-
+                    
                     const sourceMap = new SourceMap (this.path, url)
 
                     if (sourceMap.parsed) {
