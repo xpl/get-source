@@ -65,7 +65,7 @@ class SourceMap {
 class SourceFile {
 
     constructor (path, text /* optional */) {
-
+        
         this.path = path
 
         if (text) {
@@ -79,7 +79,7 @@ class SourceFile {
 
                         xhr.open ('GET', path, false /* SYNCHRONOUS XHR FTW :) */)
                         xhr.send (null)
-
+                        
                     this.text = xhr.responseText }
 
                 else {
