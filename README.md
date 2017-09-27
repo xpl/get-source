@@ -1,5 +1,7 @@
 # get-source
 
+[![Build Status](https://travis-ci.org/xpl/get-source.svg?branch=master)](https://travis-ci.org/xpl/get-source) [![Coverage Status](https://coveralls.io/repos/github/xpl/get-source/badge.svg)](https://coveralls.io/github/xpl/get-source) [![npm](https://img.shields.io/npm/v/get-source.svg)](https://npmjs.com/package/get-source) [![Scrutinizer Code Quality](https://img.shields.io/scrutinizer/g/xpl/get-source.svg)](https://scrutinizer-ci.com/g/xpl/get-source/?branch=master) [![dependencies Status](https://david-dm.org/xpl/get-source/status.svg)](https://david-dm.org/xpl/get-source)
+
 Platform-agnostic source code inspection, with sourcemaps support.
 
 ```bash
