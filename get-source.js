@@ -83,7 +83,7 @@ class SourceFile {
                     this.text = xhr.responseText }
 
                 else {
-                    this.text = require ('fs').readFileSync (path, { encoding: 'utf8' }) } }
+                    this.text = module.require ('fs').readFileSync (path, { encoding: 'utf8' }) } }
 
             catch (e) {
                 this.error = e
