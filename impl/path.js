@@ -3,6 +3,7 @@
 /*  ------------------------------------------------------------------------ */
 
 const isBrowser = (typeof window !== 'undefined') && (window.window === window) && window.navigator
+const cwd = isBrowser ? window.location.href : process.cwd ()
 
 /*  ------------------------------------------------------------------------ */
 
@@ -21,11 +22,7 @@ const path = module.exports = {
     	if (path.isAbsolute (x)) {
     		return path.normalize (x) }
 
-    	if (isBrowser) {
-    		return path.normalize (path.concat (window.location.href, x)) }
-
-    	else {
-    		return path.normalize (path.concat (process.cwd (), x)) }
+    	return path.normalize (path.concat (cwd, x))
     },
 
 	normalize (x) {
