@@ -136,7 +136,7 @@ class SourceFile {
             if (newLoc.sourceFile) return newLoc
         }
 
-        return this.sourceMap ? this.sourceMap.resolve (loc) : O.assign ({}, loc, {
+        return O.assign ({}, loc, {
 
             sourceFile:  this,
             sourceLine: (this.lines[loc.line - 1] || ''),
