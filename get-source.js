@@ -131,6 +131,11 @@ class SourceFile {
 
     resolve (loc /* { line[, column] } */) /* → { line, column, sourceFile, sourceLine } */ {
 
+        if (this.sourceMap) {
+            const newLoc = this.sourceMap.resolve (loc)
+            if (newLoc.sourceFile) return newLoc
+        }
+
         return this.sourceMap ? this.sourceMap.resolve (loc) : O.assign ({}, loc, {
 
             sourceFile:  this,
