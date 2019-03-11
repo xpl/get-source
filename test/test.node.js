@@ -58,7 +58,7 @@ describe ('get-source', () => {
         const resolved = uglified.resolve ({ line: 1, column: 18 }) // should be tolerant to column omission
 
         resolved.line.should.equal (4)
-        resolved.column.should.equal (1)
+        resolved.column.should.equal (2)
         resolved.sourceFile.should.equal (getSource ('./test/files/original.js'))
         resolved.sourceLine.should.equal ('\treturn \'hello world\' }')
     })
@@ -79,7 +79,7 @@ describe ('get-source', () => {
         const resolved = uglified.resolve ({ line: 1, column: 18 })
 
         resolved.line.should.equal (4)
-        resolved.column.should.equal (1)
+        resolved.column.should.equal (2)
         resolved.sourceFile.path.should.equal (path.resolve ('./test/files') + '/## embedded ##') // I've changed the filename manually, by editing .map file
         resolved.sourceLine.should.equal ('\treturn \'hello world\' }')
     })
@@ -94,7 +94,7 @@ describe ('get-source', () => {
         const resolved = babeled.resolve ({ line: 6, column: 1 })
 
         resolved.line.should.equal (4)
-        resolved.column.should.equal (1)
+        resolved.column.should.equal (2)
         resolved.sourceLine.should.equal ('\treturn \'hello world\' }')
     })
 
@@ -112,7 +112,7 @@ describe ('get-source', () => {
         const resolved = beautified.resolve ({ line: 2, column: 4 })
 
         resolved.line.should.equal (4)
-        resolved.column.should.equal (1)
+        resolved.column.should.equal (2)
         resolved.sourceFile.path.should.equal (path.resolve ('./test/files/original.js'))
         resolved.sourceLine.should.equal ('\treturn \'hello world\' }')
     })

@@ -54,9 +54,11 @@ class SourceMap {
         const originalLoc = this.parsed.originalPositionFor (loc)
         return originalLoc.source ? this.sourceFor (originalLoc.source)
                                         .resolve (O.assign ({}, loc, {
-                                            line: originalLoc.line,
-                                            column: originalLoc.column,
-                                            name: originalLoc.name })) : loc
+                                            line:   originalLoc.line,
+                                            column: originalLoc.column + 1,
+                                            name:   originalLoc.name
+                                        }))
+                                  : loc
     }
 }
 

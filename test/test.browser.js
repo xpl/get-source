@@ -76,7 +76,7 @@ selenium.describe ('Chrome test', (done) => {
                 var loc = getSource ('../original.uglified.beautified.js').resolve ({ line: 2, column: 4 })
 
                 loc.line.should.equal (4)
-                loc.column.should.equal (1)
+                loc.column.should.equal (2)
                 loc.sourceFile.path.should.contain ('test/files/original.js')
                 loc.sourceLine.should.equal ('\treturn \'hello world\' }')
             })
