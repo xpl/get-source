@@ -19,6 +19,7 @@ npm install get-source
 
 - [x] Call stacks enhanced with source code information (see the [StackTracey](https://github.com/xpl/stacktracey) library)
 - [x] [Advanced logging](https://github.com/xpl/ololog) / assertion printing
+- [x] [Error displaying components](https://github.com/xpl/panic-overlay) for front-end web development
 
 ## Usage
 
