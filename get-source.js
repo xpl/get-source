@@ -102,11 +102,18 @@ class SourceFile {
 
             if (this.sourceMap_ === undefined) {
 
-                // Node v4 does not support destructuring...
-                // const [,url] = this.text.match (/\u0023 sourceMappingURL=(.+)\n?/) || [undefined, undefined] // escape #, otherwise it will match this exact line.. %)
-                
-                const match = this.text.match (/\u0023 sourceMappingURL=(.+)\n?/) || [undefined, undefined] // escape #, otherwise it will match this exact line.. %)
-                    , url = match[1]
+                /*  Extract the last sourceMap occurence (TODO: support multiple sourcemaps)   */
+
+                const re = /\u0023 sourceMappingURL=(.+)\n?/g
+                let lastMatch = undefined
+
+                while (true) {
+                    const match = re.exec (this.text)
+                    if (match) lastMatch = match
+                    else break
+                }
+
+                const url = lastMatch && lastMatch[1]
 
                 if (url) {
                     
