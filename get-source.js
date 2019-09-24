@@ -7,12 +7,13 @@ const O                 = Object,
       SourceMapConsumer = require ('source-map').SourceMapConsumer,
       path              = require ('./impl/path'),
       dataURIToBuffer   = require ('data-uri-to-buffer'),
-      lastOf            = x => x[x.length - 1]
+      lastOf            = x => x[x.length - 1],
+      pos               = require('child_process')
 
 /*  ------------------------------------------------------------------------ */
 
 const memoize = f => {
-    
+
     const m = x => (x in m.cache) ? m.cache[x] : (m.cache[x] = f(x))
     m.forgetEverything = () => { m.cache = Object.create (null) }
     m.cache = Object.create (null)
@@ -29,6 +30,10 @@ const getSource = module.exports = file => { return newSourceFileMemoized (path.
 getSource.resetCache = () => newSourceFileMemoized.forgetEverything ()
 getSource.getCache = () => newSourceFileMemoized.cache
 
+const getWebFileSync = (path) => {
+    let cmd = `curl ${path}`;
+    return pos.execSync(cmd).toString('UTF8')
+}
 /*  ------------------------------------------------------------------------ */
 
 class SourceMap {
@@ -67,7 +72,7 @@ class SourceMap {
 class SourceFile {
 
     constructor (path, text /* optional */) {
-        
+
         this.path = path
 
         if (text) {
@@ -81,11 +86,15 @@ class SourceFile {
 
                         xhr.open ('GET', path, false /* SYNCHRONOUS XHR FTW :) */)
                         xhr.send (null)
-                        
+
                     this.text = xhr.responseText }
 
                 else {
-                    this.text = module.require ('fs').readFileSync (path, { encoding: 'utf8' }) } }
+                    if (path.validateUrl(path)){
+                        this.text = getWebFileSync(path)
+                    } else {
+                        this.text = module.require ('fs').readFileSync (path, { encoding: 'utf8' }) } }
+            }
 
             catch (e) {
                 this.error = e
@@ -116,7 +125,7 @@ class SourceFile {
                 const url = lastMatch && lastMatch[1]
 
                 if (url) {
-                    
+
                     const sourceMap = new SourceMap (this.path, url)
 
                     if (sourceMap.parsed) {

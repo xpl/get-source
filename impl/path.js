@@ -47,10 +47,15 @@ const path = module.exports = {
     isAbsolute: x => (x[0] === '/') || /^[^\/]*:/.test (x),
 
     relativeToFile (a, b) {
-        
+
         return (path.isData (a) || path.isAbsolute (b)) ?
                     path.normalize (b) :
                     path.normalize (path.concat (a.split ('/').slice (0, -1).join ('/'), b))
+    },
+
+    validateUrl(value) {
+        var strRegex = "^((https|http)://)?[a-z0-9A-Z]{3}\.[a-z0-9A-Z][a-z0-9A-Z]{0,61}?[a-z0-9A-Z]\.com|net|cn|cc (:s[0-9]{1-4})?/$";
+        return new RegExp(strRegex).test(value);
     }
 }
 
