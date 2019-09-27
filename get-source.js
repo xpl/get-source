@@ -6,13 +6,13 @@ const O                 = Object,
       isBrowser         = (typeof window !== 'undefined') && (window.window === window) && window.navigator,
       SourceMapConsumer = require ('source-map').SourceMapConsumer,
       path              = require ('./impl/path'),
-      dataURIToBuffer   = require ('data-uri-to-buffer'),
-      lastOf            = x => x[x.length - 1]
+      isURL             = path.isURL,
+      dataURIToBuffer   = require ('data-uri-to-buffer')
 
 /*  ------------------------------------------------------------------------ */
 
 const memoize = f => {
-    
+
     const m = x => (x in m.cache) ? m.cache[x] : (m.cache[x] = f(x))
     m.forgetEverything = () => { m.cache = Object.create (null) }
     m.cache = Object.create (null)
@@ -67,13 +67,14 @@ class SourceMap {
 class SourceFile {
 
     constructor (path, text /* optional */) {
-        
+
         this.path = path
 
         if (text) {
-            this.text = text }
+            this.text = text
 
-        else {
+        } else {
+
             try {
                 if (isBrowser) {
 
@@ -81,15 +82,20 @@ class SourceFile {
 
                         xhr.open ('GET', path, false /* SYNCHRONOUS XHR FTW :) */)
                         xhr.send (null)
-                        
-                    this.text = xhr.responseText }
 
-                else {
-                    this.text = module.require ('fs').readFileSync (path, { encoding: 'utf8' }) } }
+                    this.text = xhr.responseText
 
-            catch (e) {
+                } else {
+                    this.text = isURL (path)
+                                    ? module.require ('child_process').execSync (`curl ${path}`).toString ('UTF8')
+                                    : module.require ('fs').readFileSync (path, { encoding: 'utf8' })
+                }
+
+            } catch (e) {
                 this.error = e
-                this.text = '' } }
+                this.text = ''
+            }
+        }
     }
 
     get lines () {
@@ -116,7 +122,7 @@ class SourceFile {
                 const url = lastMatch && lastMatch[1]
 
                 if (url) {
-                    
+
                     const sourceMap = new SourceMap (this.path, url)
 
                     if (sourceMap.parsed) {
