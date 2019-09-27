@@ -46,4 +46,11 @@ describe ('path', () => {
         path.relativeToFile ('data:application/json;charset=utf-8;base64,eyJ2ZXJza==', 'foo.js')
               .should.equal (                                                          'foo.js')
     })
+
+    it ('implements isURL', () => {
+
+        path.isURL ('foo.js').should.equal (false)
+        path.isURL ('/foo/bar.js').should.equal (false)
+        path.isURL ('https://google.com').should.equal (true)
+    })
 })

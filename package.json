@@ -5,6 +5,8 @@
   "main": "get-source",
   "scripts": {
     "test-browser": "mocha test/test.browser --reporter spec",
+    "test-node": "mocha test/test.node --reporter spec",
+    "test-path": "mocha test/test.path --reporter spec",
     "test": "nyc --reporter=html --reporter=text mocha test/test.path test/test.node --reporter spec",
     "coveralls": "nyc report --reporter=text-lcov | coveralls"
   },

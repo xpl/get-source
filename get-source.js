@@ -6,9 +6,8 @@ const O                 = Object,
       isBrowser         = (typeof window !== 'undefined') && (window.window === window) && window.navigator,
       SourceMapConsumer = require ('source-map').SourceMapConsumer,
       path              = require ('./impl/path'),
-      dataURIToBuffer   = require ('data-uri-to-buffer'),
-      lastOf            = x => x[x.length - 1],
-      pos               = require('child_process')
+      isURL             = path.isURL,
+      dataURIToBuffer   = require ('data-uri-to-buffer')
 
 /*  ------------------------------------------------------------------------ */
 
@@ -30,10 +29,6 @@ const getSource = module.exports = file => { return newSourceFileMemoized (path.
 getSource.resetCache = () => newSourceFileMemoized.forgetEverything ()
 getSource.getCache = () => newSourceFileMemoized.cache
 
-const getWebFileSync = (path) => {
-    let cmd = `curl ${path}`;
-    return pos.execSync(cmd).toString('UTF8')
-}
 /*  ------------------------------------------------------------------------ */
 
 class SourceMap {
@@ -76,9 +71,10 @@ class SourceFile {
         this.path = path
 
         if (text) {
-            this.text = text }
+            this.text = text
 
-        else {
+        } else {
+
             try {
                 if (isBrowser) {
 
@@ -87,18 +83,19 @@ class SourceFile {
                         xhr.open ('GET', path, false /* SYNCHRONOUS XHR FTW :) */)
                         xhr.send (null)
 
-                    this.text = xhr.responseText }
+                    this.text = xhr.responseText
 
-                else {
-                    if (path.validateUrl(path)){
-                        this.text = getWebFileSync(path)
-                    } else {
-                        this.text = module.require ('fs').readFileSync (path, { encoding: 'utf8' }) } }
-            }
+                } else {
+                    this.text = isURL (path)
+                                    ? module.require ('child_process').execSync (`curl ${path}`).toString ('UTF8')
+                                    : module.require ('fs').readFileSync (path, { encoding: 'utf8' })
+                }
 
-            catch (e) {
+            } catch (e) {
                 this.error = e
-                this.text = '' } }
+                this.text = ''
+            }
+        }
     }
 
     get lines () {

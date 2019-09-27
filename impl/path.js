@@ -5,17 +5,20 @@
 const isBrowser = (typeof window !== 'undefined') && (window.window === window) && window.navigator
 const cwd = isBrowser ? window.location.href : process.cwd ()
 
+const urlRegexp = new RegExp ("^((https|http)://)?[a-z0-9A-Z]{3}\.[a-z0-9A-Z][a-z0-9A-Z]{0,61}?[a-z0-9A-Z]\.com|net|cn|cc (:s[0-9]{1-4})?/$")
+
 /*  ------------------------------------------------------------------------ */
 
 const path = module.exports = {
 
     concat (a, b) {
 
-                const a_endsWithSlash = (a[a.length - 1] === '/'),
-                      b_startsWithSlash = (b[0] === '/')
+        const a_endsWithSlash = (a[a.length - 1] === '/'),
+              b_startsWithSlash = (b[0] === '/')
 
-                return a + ((a_endsWithSlash || b_startsWithSlash) ? '' : '/') +
-                           ((a_endsWithSlash && b_startsWithSlash) ? b.substring (1) : b) },
+        return a + ((a_endsWithSlash || b_startsWithSlash) ? '' : '/') +
+                   ((a_endsWithSlash && b_startsWithSlash) ? b.substring (1) : b)
+    },
 
     resolve (x) {
 
@@ -44,6 +47,8 @@ const path = module.exports = {
 
     isData: x => x.indexOf ('data:') === 0,
 
+    isURL: x => urlRegexp.test (x),
+
     isAbsolute: x => (x[0] === '/') || /^[^\/]*:/.test (x),
 
     relativeToFile (a, b) {
@@ -51,11 +56,6 @@ const path = module.exports = {
         return (path.isData (a) || path.isAbsolute (b)) ?
                     path.normalize (b) :
                     path.normalize (path.concat (a.split ('/').slice (0, -1).join ('/'), b))
-    },
-
-    validateUrl(value) {
-        var strRegex = "^((https|http)://)?[a-z0-9A-Z]{3}\.[a-z0-9A-Z][a-z0-9A-Z]{0,61}?[a-z0-9A-Z]\.com|net|cn|cc (:s[0-9]{1-4})?/$";
-        return new RegExp(strRegex).test(value);
     }
 }
 
