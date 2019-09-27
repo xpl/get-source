@@ -86,9 +86,12 @@ class SourceFile {
                     this.text = xhr.responseText
 
                 } else {
-                    this.text = isURL (path)
-                                    ? module.require ('child_process').execSync (`curl ${path}`).toString ('UTF8')
-                                    : module.require ('fs').readFileSync (path, { encoding: 'utf8' })
+
+                    this.text = module.require ('fs').readFileSync (path, { encoding: 'utf8' })
+                      
+//                     this.text = isURL (path)
+//                                     ? module.require ('child_process').execSync (`curl ${path}`).toString ('UTF8')
+//                                     : module.require ('fs').readFileSync (path, { encoding: 'utf8' })
                 }
 
             } catch (e) {
