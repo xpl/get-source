@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/xpl/get-source.svg?branch=master)](https://travis-ci.org/xpl/get-source) [![Coverage Status](https://coveralls.io/repos/github/xpl/get-source/badge.svg)](https://coveralls.io/github/xpl/get-source) [![npm](https://img.shields.io/npm/v/get-source.svg)](https://npmjs.com/package/get-source)
 
-Platform-agnostic source code inspection, with sourcemaps support.
+Fetch source-mapped sources. Peek by file, line, column. Node & browsers. Sync & async.
 
 ```bash
 npm install get-source
