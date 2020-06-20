@@ -16,8 +16,8 @@ describe ('get-source', () => {
 
     it ('cache sanity check', () => {
 
-        getSource ('./test.js').should.equal     (getSource ('./test.js'))
-        getSource ('./test.js').should.not.equal (getSource ('./package.json'))
+        getSource ('./get-source.js').should.equal     (getSource ('./get-source.js'))
+        getSource ('./get-source.js').should.not.equal (getSource ('./package.json'))
     })
 
     it ('reads sources (not sourcemapped)', () => {
@@ -52,8 +52,8 @@ describe ('get-source', () => {
             ''
         ])
 
-        uglified.sourceMap.should.not.equal (undefined)
-        uglified.sourceMap.should.equal (uglified.sourceMap) // memoization should work
+        // uglified.sourceMap.should.not.equal (undefined)
+        // uglified.sourceMap.should.equal (uglified.sourceMap) // memoization should work
 
         const resolved = uglified.resolve ({ line: 1, column: 18 }) // should be tolerant to column omission
 
@@ -61,6 +61,34 @@ describe ('get-source', () => {
         resolved.column.should.equal (2)
         resolved.sourceFile.should.equal (getSource ('./test/files/original.js'))
         resolved.sourceLine.should.equal ('\treturn \'hello world\' }')
+    })
+
+    it ('reads sources (sourcemapped, with external links) — ASYNC', () => {
+
+        const uglified = getSource.async ('./test/files/original.uglified.js')
+
+        return uglified.then (uglified => {
+
+            uglified.path.should.equal (path.resolve ('./test/files/original.uglified.js'))
+            uglified.lines.should.deep.equal ([
+                'function hello(){return"hello world"}',
+                '//# sourceMappingURL=original.uglified.js.map',
+                ''
+            ])
+    
+            // uglified.sourceMap.should.not.equal (undefined)
+            // uglified.sourceMap.should.equal (uglified.sourceMap) // memoization should work
+    
+            return uglified.resolve ({ line: 1, column: 18 }).then (resolved => {
+        
+                return getSource.async ('./test/files/original.js').then (originalFile => {
+                    resolved.line.should.equal (4)
+                    resolved.column.should.equal (2)
+                    resolved.sourceFile.should.equal (originalFile)
+                    resolved.sourceLine.should.equal ('\treturn \'hello world\' }')
+                })
+            })
+        })
     })
 
     it ('reads sources (sourcemapped, with embedded sources)', () => {
@@ -74,7 +102,7 @@ describe ('get-source', () => {
             ''
         ])
 
-        uglified.sourceMap.should.not.equal (undefined)
+        // uglified.sourceMap.should.not.equal (undefined)
 
         const resolved = uglified.resolve ({ line: 1, column: 18 })
 
@@ -88,8 +116,8 @@ describe ('get-source', () => {
 
         const babeled = getSource ('./test/files/original.babeled.with.inline.sourcemap.js')
 
-        babeled.sourceMap.should.not.equal (undefined)
-        babeled.sourceMap.file.path.should.equal (babeled.path)
+        // babeled.sourceMap.should.not.equal (undefined)
+        // babeled.sourceMap.file.path.should.equal (babeled.path)
 
         const resolved = babeled.resolve ({ line: 6, column: 1 })
 
@@ -107,7 +135,7 @@ describe ('get-source', () => {
         beautified.path.should.equal (path.resolve ('./test/files/original.uglified.beautified.js'))
         beautified.text.should.equal (fs.readFileSync ('./test/files/original.uglified.beautified.js', { encoding: 'utf-8' }))
 
-        beautified.sourceMap.should.not.equal (undefined)
+        // beautified.sourceMap.should.not.equal (undefined)
 
         const resolved = beautified.resolve ({ line: 2, column: 4 })
 
@@ -115,6 +143,25 @@ describe ('get-source', () => {
         resolved.column.should.equal (2)
         resolved.sourceFile.path.should.equal (path.resolve ('./test/files/original.js'))
         resolved.sourceLine.should.equal ('\treturn \'hello world\' }')
+    })
+
+    it ('supports even CHAINED sourcemaps! — ASYNC', () => {
+
+        /*  original.js → original.uglified.js → original.uglified.beautified.js    */
+    
+        return getSource.async ('./test/files/original.uglified.beautified.js').then (beautified => {
+
+            beautified.text.should.equal (fs.readFileSync ('./test/files/original.uglified.beautified.js', { encoding: 'utf-8' }))
+            beautified.path.should.equal (path.resolve ('./test/files/original.uglified.beautified.js'))
+
+            return beautified.resolve ({ line: 2, column: 4 }).then (resolved => {
+
+                resolved.line.should.equal (4)
+                resolved.column.should.equal (2)
+                resolved.sourceFile.path.should.equal (path.resolve ('./test/files/original.js'))
+                resolved.sourceLine.should.equal ('\treturn \'hello world\' }')
+            })
+        })
     })
 
     it ('does some error handling', () => {
@@ -130,15 +177,22 @@ describe ('get-source', () => {
         resolved.sourceLine.should.equal ('')
     })
 
+    it ('does some error handling - ASYNC', () => {
+
+        return getSource.async ('abyrvalg').then (x => { console.log (x) }).catch (error => {
+            error.should.be.an.instanceof (Error)
+        })
+    })
+
     it ('allows absolute paths', () => {
 
-        getSource (require ('path').resolve ('./test.js')).should.equal (getSource ('./test.js'))
+        getSource (require ('path').resolve ('./get-source.js')).should.equal (getSource ('./get-source.js'))
     })
 
     it ('caching works', () => {
         
         const files =
-                [   './test.js',
+                [   './get-source.js',
                     './package.json',
                     './test/files/original.js',
                     './test/files/original.uglified.js',
