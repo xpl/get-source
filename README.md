@@ -22,14 +22,11 @@ npm install get-source
 - [x] [Advanced logging](https://github.com/xpl/ololog) / assertion printing
 - [x] [Error displaying components](https://github.com/xpl/panic-overlay) for front-end web development
 
-## Usage
+## Usage (Synchronous)
 
 ```javascript
 getSource = require ('get-source')
 ```
-
-### Synchronous
-
 ```javascript
 file = getSource ('./scripts/index.min.js')
 ```
@@ -61,7 +58,9 @@ It will look through the sourcemap chain, returning following:
 
 In that returned object, `sourceFile` is the same kind of object that `getSource` returns. So you can access its `text`, `lines` and `path` fields to obtain the full information. And the `sourceLine` is returned just for the convenience, as a shortcut.
 
-### Asynchronous
+## Usage (Asynchronous)
+
+Pretty much the same as synchronous, except `getSource.async`. It returns awaitable promises:
 
 ```javascript
 file     = await getSource.async ('./scripts/index.min.js')
