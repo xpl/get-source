@@ -111,10 +111,12 @@ function impl (fetchFile, sync) {
                         const file = SourceFile (path)
                         if (sync) {
                             try { return SyncPromise.valueFrom (file) }
-                            catch (e) { return {
-                                path, text: '', error: e,
-                                resolve (loc) { return assign ({}, loc, { error: e, sourceLine: '', sourceFile: '' }) }
-                            } }
+                            catch (e) {
+                                return {
+                                    path, text: '', error: e,
+                                    resolve (loc) { return assign ({}, loc, { error: e, sourceLine: '', sourceFile: '' }) }
+                                }
+                            }
                         }
                         return file
                     }, {
@@ -132,7 +134,6 @@ module.exports = impl (function fetchFileSync (path) {
                                 xhr.open ('GET', path, false /* SYNCHRONOUS XHR FTW :) */)
                                 xhr.send (null)
                                 resolve (xhr.responseText)
-                    
                             } else {
                                 resolve (module.require ('fs').readFileSync (path, { encoding: 'utf8' }))
                             }

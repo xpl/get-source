@@ -60,7 +60,7 @@ In that returned object, `sourceFile` is the same kind of object that `getSource
 
 ## Usage (Asynchronous)
 
-Pretty much the same as synchronous, except `getSource.async`. It returns awaitable promises:
+Pretty much the same as synchronous, except it's `getSource.async`. It returns awaitable promises:
 
 ```javascript
 file     = await getSource.async ('./scripts/index.min.js')
