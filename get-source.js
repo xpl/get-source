@@ -115,7 +115,7 @@ function impl (fetchFile, sync) {
                             catch (e) {
                                 return {
                                     path, text: '', error: e,
-                                    resolve (loc) { return assign ({}, loc, { error: e, sourceLine: '', sourceFile: '' }) }
+                                    resolve (loc) { return assign ({}, loc, { error: e, sourceLine: '', sourceFile: file }) }
                                 }
                             }
                         }

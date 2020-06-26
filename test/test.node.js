@@ -183,6 +183,7 @@ describe ('get-source', () => {
 
         resolved.error.should.equal (nonsense.error)
         resolved.sourceLine.should.equal ('')
+        resolved.sourceFile.should.be.instanceOf (Object)
     })
 
     it ('does some error handling - ASYNC', () => {
