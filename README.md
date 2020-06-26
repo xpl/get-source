@@ -25,7 +25,7 @@ npm install get-source
 ## Usage (Synchronous)
 
 ```javascript
-getSource = require ('get-source')
+import getSource from 'get-source'
 ```
 ```javascript
 file = getSource ('./scripts/index.min.js')
