@@ -145,6 +145,14 @@ describe ('get-source', () => {
         resolved.sourceLine.should.equal ('\treturn \'hello world\' }')
     })
 
+    it ('adheres to async interface', () => {
+    
+        return getSource.async ('./get-source.js').then (result => {
+
+            ;(result.resolve ({ line: 1, column: 0 }) instanceof Promise).should.equal (true)
+        })
+    })
+
     it ('supports even CHAINED sourcemaps! — ASYNC', () => {
 
         /*  original.js → original.uglified.js → original.uglified.beautified.js    */

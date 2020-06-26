@@ -44,8 +44,9 @@ function impl (fetchFile, sync) {
                     if (sync) {
                         try { return SyncPromise.valueFrom (result) }
                         catch (e) { return assign ({}, loc, { error: e }) }
+                    } else {
+                        return Promise.resolve (result)
                     }
-                    return result
                 },
                 _resolve,
             })
