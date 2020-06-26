@@ -3,6 +3,7 @@
   "version": "2.0.4",
   "description": "Fetch source-mapped sources. Peek by file, line, column. Node & browsers. Sync & async.",
   "main": "get-source",
+  "types": "./get-source.d.ts",
   "scripts": {
     "test-browser": "mocha test/test.browser --reporter spec",
     "test-node": "mocha test/test.node --reporter spec",
