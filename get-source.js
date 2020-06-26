@@ -113,10 +113,15 @@ function impl (fetchFile, sync) {
                         if (sync) {
                             try { return SyncPromise.valueFrom (file) }
                             catch (e) {
-                                return {
-                                    path, text: '', error: e,
-                                    resolve (loc) { return assign ({}, loc, { error: e, sourceLine: '', sourceFile: file }) }
+                                const noFile = {
+                                    path,
+                                    text: '',
+                                    error: e,
+                                    resolve (loc) {
+                                        return assign ({}, loc, { error: e, sourceLine: '', sourceFile: noFile })
+                                    }
                                 }
+                                return noFile
                             }
                         }
                         return file
