@@ -42,7 +42,7 @@ const path = module.exports = {
 
         const result = output.reverse ().join ('/')
 
-        return ((isBrowser && (result[0] === '/')) ? window.location.origin : '') + result
+        return ((isBrowser && (result[0] === '/')) ? result[1] === '/' ? window.location.protocol : window.location.origin : '') + result
     },
 
     isData: x => x.indexOf ('data:') === 0,

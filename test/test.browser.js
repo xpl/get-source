@@ -73,6 +73,9 @@ selenium.describe ('Chrome test', (done) => {
                 path.relativeToFile ('http://foo.com/scripts/bar.js', '/bar.js.map')
                     .should.equal ('file:///bar.js.map')
 
+                path.relativeToFile ('http://foo.com/scripts/bar.js', '//bar.com/bar.js.map')
+                    .should.equal ('http:///bar.com/bar.js.map')
+
                 var loc = getSource ('../original.uglified.beautified.js').resolve ({ line: 2, column: 4 })
 
                 loc.line.should.equal (4)
