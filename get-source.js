@@ -7,7 +7,8 @@ const { assign }        = Object,
       SourceMapConsumer = require ('source-map').SourceMapConsumer,
       SyncPromise       = require ('./impl/SyncPromise'),
       path              = require ('./impl/path'),
-      dataURIToBuffer   = require ('data-uri-to-buffer')
+      dataURIToBuffer   = require ('data-uri-to-buffer'),
+      nodeRequire       = isBrowser ? null : module.require
 
 /*  ------------------------------------------------------------------------ */
 
@@ -141,7 +142,7 @@ module.exports = impl (function fetchFileSync (path) {
                                 xhr.send (null)
                                 resolve (xhr.responseText)
                             } else {
-                                resolve (module.require ('fs').readFileSync (path, { encoding: 'utf8' }))
+                                resolve (nodeRequire ('fs').readFileSync (path, { encoding: 'utf8' }))
                             }
                         })
                     }, true)
@@ -153,7 +154,7 @@ module.exports.async = impl (function fetchFileAsync (path) {
                                     return fetch (path).then (x => x.text ())
                                 } else {
                                     return new Promise ((resolve, reject) => {
-                                        module.require ('fs').readFile (path, { encoding: 'utf8' }, (e, x) => {
+                                        nodeRequire ('fs').readFile (path, { encoding: 'utf8' }, (e, x) => {
                                             e ? reject (e) : resolve (x)
                                         })
                                     })
