@@ -1,6 +1,6 @@
 {
   "name": "get-source",
-  "version": "2.0.9",
+  "version": "2.0.10",
   "description": "Fetch source-mapped sources. Peek by file, line, column. Node & browsers. Sync & async.",
   "main": "get-source",
   "types": "./get-source.d.ts",
