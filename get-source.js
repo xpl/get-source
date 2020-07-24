@@ -150,15 +150,26 @@ module.exports = impl (function fetchFileSync (path) {
 /*  ------------------------------------------------------------------------ */
 
 module.exports.async = impl (function fetchFileAsync (path) {
-                                if (isBrowser) {
-                                    return fetch (path).then (x => x.text ())
-                                } else {
-                                    return new Promise ((resolve, reject) => {
-                                        nodeRequire ('fs').readFile (path, { encoding: 'utf8' }, (e, x) => {
-                                            e ? reject (e) : resolve (x)
-                                        })
-                                    })
+                        return new Promise ((resolve, reject) => {
+                            if (isBrowser) {
+                                let xhr = new XMLHttpRequest ()
+                                xhr.open ('GET', path)
+                                xhr.onreadystatechange = event => {
+                                    if (xhr.readyState === 4) {
+                                        if (xhr.status === 200) {
+                                            resolve (xhr.responseText)
+                                        } else {
+                                            reject (new Error (xhr.statusText))
+                                        }
+                                    }
                                 }
-                            })
+                                xhr.send (null)
+                            } else {
+                                nodeRequire ('fs').readFile (path, { encoding: 'utf8' }, (e, x) => {
+                                    e ? reject (e) : resolve (x)
+                                })
+                            }
+                        })
+                    })
 
 /*  ------------------------------------------------------------------------ */
