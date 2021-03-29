@@ -117,6 +117,7 @@ function impl (fetchFile, sync) {
                                 const noFile = {
                                     path,
                                     text: '',
+                                    lines: [],
                                     error: e,
                                     resolve (loc) {
                                         return assign ({}, loc, { error: e, sourceLine: '', sourceFile: noFile })
