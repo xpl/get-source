@@ -16,11 +16,11 @@ npm install get-source
 - [x] **Asynchronous** API — good for everything web!
 - [x] Built-in cache
 
-## What for
+## What For
 
 - [x] Call stacks enhanced with source code information (see the [StackTracey](https://github.com/xpl/stacktracey) library)
 - [x] [Advanced logging](https://github.com/xpl/ololog) / assertion printing
-- [x] [Error displaying components](https://github.com/xpl/panic-overlay) for front-end web development
+- [x] [Error displaying components](https://github.com/xpl/panic-overlay) for the front-end web development
 
 ## Usage (Synchronous)
 
@@ -67,7 +67,7 @@ file     = await getSource.async ('./scripts/index.min.js')
 location = await file.resolve ({ line: 1, column: 8 })
 ```
 
-## Error handling
+## Error Handling
 
 In synchronous mode, it never throws (due to backward compatibility reasons with existing code):
 
